@@ -1,0 +1,3 @@
+[submodule "jsvpx"]
+	path = jsvpx
+	url = https://github.com/jscodec/jsvpx.git

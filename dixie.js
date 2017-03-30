@@ -7865,59 +7865,28 @@ function main(AJAX_response, argc, argv_)
 	var getElementById_render = document.getElementById('render');
 	var getElementById_frame = document.getElementById('frame');
 	var startdatum = new Date();var ii=0;var isframe;var decoder2 = new vp8_decoder_ctx();
+        var jsvpx = new JsVpx();
     /* Decode file */
 	function readframe() {
 		//while ()
     isframe=!read_frame(input, buf, buf_off, buf_sz, buf_alloc_sz);//while (!read_frame(&input, &buf, &buf_sz, &buf_alloc_sz))
     if (isframe)setTimeout(function() {//if(buf_sz>1000 && ii>164)alert(ii+' '+buf_sz);if(ii<1) continue;
-        buf=buf[0]; // added by d
+                buf=buf[0]; // added by d
 		startdatum = new Date();
 		
-		vp8_dixie_decode_frame(decoder2, buf, buf_sz);
-        buf=[buf]; // added by d
-		var img_avail = decoder2.frame_hdr.is_shown;
-		var img = decoder2.ref_frames[0].img;
-/////		
-//		var iter = [null];//vpx_codec_iter_t
-//        var img=newObjectI(vpx_image_t);//
-//        var timer=newObjectI(vpx_usec_timer);
-//        var                   corrupted=int_;
-//		ii++;++frame_in;
-//        vpx_usec_timer_start(timer);//&timer
-//
-//        if (vpx_codec_decode(decoder, buf, buf_sz, null, 0))
-//        {
-//            var detail = vpx_codec_error_detail(decoder);
-//            fprintf(stderr, "Failed to decode frame: %s\n", vpx_codec_error(decoder));
-//
-//            if (detail)
-//                fprintf(stderr, "  Additional information: %s\n", detail);
-//
-//            alert('goto fail');
-//        }
-//		
-//        vpx_usec_timer_mark(timer);
-//        dx_time += vpx_usec_timer_elapsed(timer);
-//
-//        ++frame_in;
-//
-////        /*todo:if (vpx_codec_control(&decoder, VP8D_GET_FRAME_CORRUPTED, &corrupted))
-////        {
-////            fprintf(stderr, "Failed VP8_GET_FRAME_CORRUPTED: %s\n",
-////                    vpx_codec_error(&decoder));
-////            goto fail;
-////        }*/
-//        frames_corrupted += corrupted;
-//
-//        if ((img = vpx_codec_get_frame(decoder, iter)))
-//            ++frame_out;
-//////		
+
+                buf=[buf][0]; // added by d
+	
+                var rawFrame = jsvpx.decode(buf);
+              
 		enddatum =new Date();
 		getElementById_timecode.innerHTML=input.pkt[0].timecode+' ('+((input.pkt[0].timecode/1000000000)>>0)+' sec)';
-		if(img_avail) {
-		getElementById_render.innerHTML=(enddatum-startdatum)+'ms<br />FPS:'+(1000/(enddatum-startdatum)).toFixed(2);
-		if (img)
-		vpximg2canvas(img);
+		
+                if(rawFrame) {
+                    getElementById_render.innerHTML=(enddatum-startdatum)+'ms<br />FPS:'+(1000/(enddatum-startdatum)).toFixed(2);
+                    rawFrame.planes = [rawFrame.img_data];
+                    vpximg2canvas(rawFrame);
+                
 		ii++;
 		getElementById_frame.innerHTML=ii;
 		}
